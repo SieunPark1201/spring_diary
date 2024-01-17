@@ -1,11 +1,14 @@
 package com.example.spring_diary.User;
 
+import com.example.spring_diary.Picture.Picture;
+import com.example.spring_diary.diary.Diary;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Getter
@@ -28,6 +31,9 @@ public class User {
 
     @Column
     private LocalDate birthday;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Diary> diaryList;
 
 
     public User(String nickname, String email, String password, LocalDate birthday){
