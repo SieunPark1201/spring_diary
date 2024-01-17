@@ -1,4 +1,4 @@
 package com.example.spring_diary.Summary;
 
-public class summaryService {
+public class SummaryDto {
 }
