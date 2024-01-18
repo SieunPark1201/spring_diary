@@ -1,5 +1,6 @@
-package com.example.spring_diary.Picture;
+package com.example.spring_diary.picture;
 
+import com.example.spring_diary.summary.Summary;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +18,10 @@ public class Picture {
 
     @Column
     private byte[] content;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false, name = "summary_summaryId")
+    private Summary summary;
 
     public Picture(byte[] content){
         this.content = content;

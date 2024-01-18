@@ -1,4 +1,4 @@
-package com.example.spring_diary.Picture;
+package com.example.spring_diary.picture;
 
 
 import org.springframework.data.jpa.repository.JpaRepository;

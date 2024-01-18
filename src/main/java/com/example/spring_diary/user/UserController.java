@@ -1,4 +1,4 @@
-package com.example.spring_diary.User;
+package com.example.spring_diary.user;
 
 import org.springframework.stereotype.Controller;
 

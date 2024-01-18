@@ -1,6 +1,8 @@
-package com.example.spring_diary.Summary;
+package com.example.spring_diary.summary;
 
-import com.example.spring_diary.Picture.Picture;
+import com.example.spring_diary.diary.Diary;
+import com.example.spring_diary.picture.Picture;
+import com.example.spring_diary.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,6 +23,10 @@ public class Summary {
 
     @Column(length = 5000)
     private String content;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false, name = "diary_diaryId")
+    private Diary diary;
 
     @OneToMany(mappedBy = "summary", fetch = FetchType.LAZY)
     private List<Picture> pictureList;

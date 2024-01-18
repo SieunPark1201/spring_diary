@@ -1,12 +1,12 @@
-package com.example.spring_diary.Summary;
+package com.example.spring_diary.picture;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SummaryService {
+public class PictureService {
 
     @Autowired
-    SummaryRepository summaryRepository;
+    PictureRepository pictureRepository;
 }

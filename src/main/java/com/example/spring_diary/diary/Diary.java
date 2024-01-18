@@ -1,8 +1,8 @@
 package com.example.spring_diary.diary;
 
 
-import com.example.spring_diary.Picture.Picture;
-import com.example.spring_diary.Summary.Summary;
+import com.example.spring_diary.summary.Summary;
+import com.example.spring_diary.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,6 +29,11 @@ public class Diary {
 
     @Column
     private boolean uploaded;    // enum으로 하는 게 코드 가독성이 더 좋으려나? -> 굳이...
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false, name = "user_userId")
+    private User user;
 
     @OneToMany(mappedBy = "diary", fetch = FetchType.LAZY)
     private List<Summary> summaryList;

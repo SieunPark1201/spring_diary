@@ -1,6 +1,5 @@
-package com.example.spring_diary.User;
+package com.example.spring_diary.user;
 
-import com.example.spring_diary.Picture.Picture;
 import com.example.spring_diary.diary.Diary;
 import jakarta.persistence.*;
 import lombok.Getter;

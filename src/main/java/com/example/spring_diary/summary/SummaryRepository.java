@@ -1,8 +1,9 @@
-package com.example.spring_diary.User;
+package com.example.spring_diary.summary;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface SummaryRepository extends JpaRepository<Summary, Long> {
 }
