@@ -23,6 +23,7 @@ public class UserService {
         User user1 = userRepository.findByUserId(userDto.getUserId());
 
         if (user1 == null) {
+            // 해당 회원이 없으면 예외처리 발생
             System.out.println("해당 사용자를 찾을 수 없습니다.");
             throw new EntityNotFoundException();
         } else {
@@ -42,6 +43,7 @@ public class UserService {
         User user1 = userRepository.findByUserId(userDto.getUserId());
 
         if (user1 == null) {
+            // 해당 회원이 없으면 예외처리 발생
             System.out.println("해당 사용자를 찾을 수 없습니다.");
             throw new EntityNotFoundException();
         } else {
