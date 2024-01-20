@@ -3,6 +3,8 @@ package com.example.spring_diary.user;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+//import org.springframework.security.crypto.password.PasswordEncoder;
+
 
 @Service
 public class UserService {
@@ -29,10 +31,11 @@ public class UserService {
         } else {
             user1.setNickname(userDto.getNickname());
             user1.setEmail(userDto.getEmail());
-            user1.setPassword(userDto.getPassword());
+//            user1.setPassword(passwordEncoder.encode(userDto.getPassword()));
             user1.setBirthday(userDto.getBirthday());
 
             userRepository.save(user1);
+
         }
 
     }

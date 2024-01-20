@@ -2,6 +2,7 @@ package com.example.spring_diary.user;
 
 import com.example.spring_diary.diary.Diary;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -35,6 +36,7 @@ public class User {
     private List<Diary> diaryList;
 
 
+    @Builder
     public User(String nickname, String email, String password, LocalDate birthday){
         this.nickname = nickname;
         this.email = email;
