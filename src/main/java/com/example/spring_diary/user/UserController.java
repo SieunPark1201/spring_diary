@@ -25,7 +25,7 @@ public class UserController {
     @PostMapping("user/new")
     public String newUser(UserDto userDto){
         userService.createUser(userDto);
-
+        return "redirect:/";
     }
 
 
