@@ -29,5 +29,13 @@ public class UserController {
     }
 
 
+    // 회원수정 화면
+
+
+    // 회원삭제 화면
+
+
+
+
 
 }
