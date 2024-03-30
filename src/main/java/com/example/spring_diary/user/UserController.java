@@ -2,6 +2,7 @@ package com.example.spring_diary.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -39,8 +40,8 @@ public class UserController {
         return "redirect:/";
     }
 
-    // 회원삭제 화면
-    @GetMapping("user/delete")
+    // 회원탈퇴 화면
+    @DeleteMapping("user/delete")
     public String userDelete(UserDto userDto) throws Exception{
         userService.deleteUser(userDto);
         return "redirect:/";
