@@ -9,5 +9,5 @@ import java.util.List;
 public interface DiaryRepository extends JpaRepository<Diary, Long> {
     Diary findByDiaryId(long diaryId);
 
-    List<Diary> findAllByIsUploaded(boolean isUploaded);
+    List<Diary> findAllByUploaded(boolean Uploaded);
 }

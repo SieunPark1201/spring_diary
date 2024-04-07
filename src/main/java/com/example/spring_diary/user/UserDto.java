@@ -1,7 +1,6 @@
 package com.example.spring_diary.user;
 
 
-import jakarta.persistence.Column;
 import lombok.Getter;
 import lombok.Setter;
 

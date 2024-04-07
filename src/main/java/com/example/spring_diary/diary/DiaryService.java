@@ -41,20 +41,19 @@ public class DiaryService {
             throw new Exception();   // 좀 더 구체적인 Exception으로 나중에 수정하기
         } else {
             unuploadedDiary.setUploaded(true);
-            Diary uploadingDiary = unuploadedDiary;
-            diaryRepository.save(uploadingDiary);
+            diaryRepository.save(unuploadedDiary);
         }
     }
 
     // 글 조회-날짜별 && uploaded == true
     public List<Diary> readAllUploaded(){
-        List<Diary> AllUploadedDiary = diaryRepository.findAllByIsUploaded(true);
+        List<Diary> AllUploadedDiary = diaryRepository.findAllByUploaded(true);
         return AllUploadedDiary;
     }
 
     // 글 조회-uploaded == false
     public List<Diary> readAllUnUploaded(){
-        List<Diary> AllUnUploadedDiary = diaryRepository.findAllByIsUploaded(false);
+        List<Diary> AllUnUploadedDiary = diaryRepository.findAllByUploaded(false);
         return AllUnUploadedDiary;
     }
 

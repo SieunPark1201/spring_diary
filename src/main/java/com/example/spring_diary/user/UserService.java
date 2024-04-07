@@ -2,20 +2,29 @@ package com.example.spring_diary.user;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-//import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.Collections;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
 
     //회원가입
     public void createUser(UserDto userDto){
         User user1 = new User(userDto.getNickname(), userDto.getEmail(),
-                userDto.getPassword(), userDto.getBirthday());
+                passwordEncoder.encode(userDto.getPassword()), userDto.getBirthday());
         userRepository.save(user1);
     }
 
@@ -31,7 +40,7 @@ public class UserService {
         } else {
             user1.setNickname(userDto.getNickname());
             user1.setEmail(userDto.getEmail());
-//            user1.setPassword(passwordEncoder.encode(userDto.getPassword()));
+            user1.setPassword(passwordEncoder.encode(userDto.getPassword()));
             user1.setBirthday(userDto.getBirthday());
 
             userRepository.save(user1);
@@ -55,4 +64,19 @@ public class UserService {
     }
 
 
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+         User user = userRepository.findByEmail(email);
+        return toUserDetail(user);
+    }
+
+
+    private UserDetails toUserDetail(User user) {
+        return org.springframework.security.core.userdetails.User.withUsername(user.getEmail())
+                .password(user.getPassword())
+                .authorities(Collections.emptyList()) // 권한이 없는 경우 빈 리스트를 제공
+                .build();
+    }
+
 }
+

@@ -1,7 +1,9 @@
 package com.example.spring_diary.diary;
 
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,6 +13,11 @@ public class DiaryController {
 
     @Autowired
     private DiaryService diaryService;
+
+    @GetMapping("/home")
+    public String home() {
+        return "home";
+    }
 
 
 //    글 생성 화면
@@ -49,7 +56,7 @@ public class DiaryController {
 
 
 //    글 삭제 화면
-    @DeleteMapping("diary/delete")
+    @PostMapping("diary/delete")
     public String deleteDiary(DiaryDto diaryDto){
         diaryService.deleteDiary(diaryDto);
         return "redirect:/";

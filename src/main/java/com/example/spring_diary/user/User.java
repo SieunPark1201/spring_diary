@@ -23,10 +23,10 @@ public class User {
     @Column(length = 20)
     private String nickname;
 
-    @Column(length = 50)
+    @Column(length = 50, unique = true)
     private String email;
 
-    @Column(length = 20)
+    @Column(length = 400)
     private String password;
 
     @Column
