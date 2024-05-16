@@ -23,8 +23,10 @@ public class UserService implements UserDetailsService {
 
     //회원가입
     public void createUser(UserDto userDto){
-        User user1 = new User(userDto.getNickname(), userDto.getEmail(),
-                passwordEncoder.encode(userDto.getPassword()), userDto.getBirthday());
+        User user1 = new User(userDto.getNickname(),
+                userDto.getEmail(),
+                passwordEncoder.encode(userDto.getPassword()),
+                userDto.getBirthday());
         userRepository.save(user1);
     }
 

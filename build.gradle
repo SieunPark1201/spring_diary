@@ -17,9 +17,21 @@ configurations {
 	}
 }
 
+// Spring Cloud 관련 의존성을 찾기 위해 관련 리포지토리 추가
 repositories {
 	mavenCentral()
+	maven { url "https://repo.spring.io/release" }
+	maven { url "https://repo.spring.io/snapshot" }
+	maven { url "https://repo.spring.io/milestone" }
 }
+
+
+//SpringBoot 버전과 맞춰주기
+ext {
+	set('springCloudVersion', "2022.0.3")
+}
+
+
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -28,6 +40,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 	implementation 'org.json:json:20211205'
+	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
 
 
 	compileOnly 'org.projectlombok:lombok'
@@ -36,6 +50,14 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 }
+
+//Spring Cloud BOM--Spring Cloud 의존성의 호환성을 보장하기 위해 사용--을 가져와 의존성을 관리할 수 있도록 'dependencyManagement'블록 추가
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+	}
+}
+
 
 tasks.named('bootBuildImage') {
 	builder = 'paketobuildpacks/builder-jammy-base:latest'
