@@ -7,4 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SummaryDto {
+
+    private long summaryId;
+    private String content;
 }

@@ -1,5 +1,6 @@
 package com.example.spring_diary.summary;
 
+import com.example.spring_diary.diary.DiaryDto;
 import com.example.spring_diary.openaiApi.ChatRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -25,8 +26,8 @@ public class SummaryController {
         }
 
         @PostMapping("summary/create")
-        public String summarizeText(@RequestBody String question) {
-            return summaryService.summarize(question);
+        public String summarizeText(DiaryDto diaryDto) {
+            return summaryService.summarize(diaryDto);
         }
 
 }

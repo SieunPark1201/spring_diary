@@ -1,5 +1,6 @@
 package com.example.spring_diary.diary;
 
+import com.example.spring_diary.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,4 +11,6 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
     Diary findByDiaryId(long diaryId);
 
     List<Diary> findAllByUploaded(boolean Uploaded);
+
+    DiaryRepository findAllByUser(User user);
 }

@@ -1,6 +1,7 @@
 package com.example.spring_diary.summary;
 
 import com.example.spring_diary.diary.Diary;
+import com.example.spring_diary.diary.DiaryDto;
 import com.example.spring_diary.picture.Picture;
 import com.example.spring_diary.user.User;
 import jakarta.persistence.*;

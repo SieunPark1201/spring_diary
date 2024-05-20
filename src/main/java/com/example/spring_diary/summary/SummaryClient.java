@@ -8,10 +8,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
 
-@FeignClient(name = "summaryClient", url = "http://localhost:8080")
+@FeignClient(name = "summaryClient", url = "https://api.openai.com/v1/")
 public interface SummaryClient {
 
-    @PostMapping("/summary/create")
+
+    // completions 엔드포인트는 OpenAI API의 텍스트 생성 기능을 호출하는 기본 경로
+    @PostMapping("chat/completions")
     ResponseEntity<ChatResponse> summarizeclient(
             @RequestHeader("Authorization") String apiKey,
             @RequestBody ChatRequest request
