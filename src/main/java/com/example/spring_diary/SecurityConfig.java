@@ -45,10 +45,10 @@ public class SecurityConfig {
         httpSecurity
                 //login authenticated에서 제외할 대상 url 지정
                 .authorizeHttpRequests(authorize -> authorize
-//                        .requestMatchers(HttpMethod.GET, "/user/login", "/user/new").permitAll()
-//                        .requestMatchers(HttpMethod.POST, "/user/login","/user/new").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/user/login", "/user/new").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/user/login","/user/new").permitAll()
+//                        .requestMatchers(HttpMethod.GET, "/**").permitAll()
+//                        .requestMatchers(HttpMethod.POST, "/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

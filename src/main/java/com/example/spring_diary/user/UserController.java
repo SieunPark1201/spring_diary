@@ -29,7 +29,7 @@ public class UserController {
     }
 
 //    로그인화면
-    @GetMapping("user/login")
+@PostMapping("/user/login")
     public String userLogin(HttpServletRequest request, Model model) throws UnsupportedEncodingException {
         String errorMessage = null;
         if (request.getParameter("error") != null) {
@@ -39,6 +39,10 @@ public class UserController {
         model.addAttribute("errorMessage", errorMessage);
         return "user/login";}
 
+    @GetMapping("/user/login")
+    public String showLoginPage() {
+        return "user/login";
+    }
 
     //    회원가입 화면
     @GetMapping("user/new")

@@ -1,33 +1,50 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Register</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입 - 세줄요약좀</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-<form action="/user/new" method="post">
-    <div>
-        <label for="nickname">Nickname:</label>
-        <input type="text" id="nickname" name="nickname" required>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h3>회원가입</h3>
+                </div>
+                <div class="card-body">
+                    <form action="/user/new" method="post">
+                        <div class="form-group">
+                            <label for="nickname">Nickname</label>
+                            <input type="text" class="form-control" id="nickname" name="nickname" maxlength="20" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" maxlength="50" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" maxlength="400" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="birthday">Birthday</label>
+                            <input type="date" class="form-control" id="birthday" name="birthday" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">회원가입</button>
+                    </form>
+                    <div class="text-center mt-3">
+                        <a href="/user/login">로그인</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div>
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required>
-    </div>
-    <div>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-    </div>
-    <div>
-        <label for="birthday">Birthday:</label>
-        <input type="date" id="birthday" name="birthday" required>
-    </div>
-    <button type="submit">Register</button>
-</form>
+</div>
 
-
-<form action="/user/delete" method="post">
-    <button type="submit" onclick="return confirm('Are you sure you want to delete your account?');">Delete Account</button>
-</form>
-
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

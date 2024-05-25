@@ -1,12 +1,16 @@
 package com.example.spring_diary.diary;
 
+import com.example.spring_diary.user.User;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @Controller
 public class DiaryController {
@@ -15,53 +19,77 @@ public class DiaryController {
     private DiaryService diaryService;
 
     @GetMapping("/home")
-    public String home() {
+    public String home(HttpSession session, Model model) {
+        User user = (User) session.getAttribute("loggedInUser");
+        model.addAttribute("nickname", user.getNickname());
         return "home";
     }
 
-
 //    글 생성 화면
     @GetMapping("diary/new")
-    public String newDiary(){ return "diary/diary-register"; }
+public String newDiary(HttpSession session, Model model, @RequestParam(name = "date", required = false) String date) {
+    User user = (User) session.getAttribute("loggedInUser");
+    model.addAttribute("nickname", user.getNickname());
+    model.addAttribute("date", date != null ? LocalDate.parse(date) : LocalDate.now());
+    return "diary/diary-register";
+}
 
     @PostMapping("diary/new")
-    public String newDiary(DiaryDto diaryDto){
+    public String newDiary(DiaryDto diaryDto, HttpSession session) {
         diaryService.createDiary(diaryDto);
-        return "redirect:/";
+        return "redirect:/home";
     }
 
 
-//    글 수정 화면
-    @PostMapping("diary/update")
-    public String updateDiary(DiaryDto diaryDto){
-        diaryService.updateDiary(diaryDto);
-        return "redirect:/";
-    }
+////    글 수정 화면
+//    @PostMapping("diary/update")
+//    public String updateDiary(DiaryDto diaryDto){
+//        diaryService.updateDiary(diaryDto);
+//        return "redirect:/";
+//    }
 
 
-//    글 전체 조회 화면
     @GetMapping("diary/read/uploaded")
-    public String readDiary(){
-        diaryService.readAllUploaded();
-        return "diary/diary-readAllUploaded";
+    public String readDiary(HttpSession session, Model model) {
+        User user = (User) session.getAttribute("loggedInUser");
+        model.addAttribute("nickname", user.getNickname());
+        List<Diary> uploadedDiaries = diaryService.readAllUploaded();
+        model.addAttribute("uploadedDiaries", uploadedDiaries);
+        return "redirect:/home";
     }
 
-
-//     글 조회-uploaded == false 화면
     @GetMapping("diary/read/un-uploaded")
-    public String readUnUploadedDiary(){
-        diaryService.readAllUnUploaded();
+    public String readUnUploadedDiary(HttpSession session, Model model) {
+        User user = (User) session.getAttribute("loggedInUser");
+        model.addAttribute("nickname", user.getNickname());
+        List<Diary> temporaryDiaries = diaryService.readAllUnUploaded();
+        model.addAttribute("temporaryDiaries", temporaryDiaries);
         return "diary/diary-readTemporary";
     }
 
+    @GetMapping("diary/edit")
+    public String editDiary(@RequestParam("id") long id, HttpSession session, Model model) {
+        User user = (User) session.getAttribute("loggedInUser");
+        model.addAttribute("nickname", user.getNickname());
+        Diary diary = diaryService.getDiaryById(id);
+        model.addAttribute("diary", diary);
+        return "diary/diary-edit";
+    }
 
-//    글 삭제 화면
+    @GetMapping("diary/edit-saved")
+    public String editSavedDiary(@RequestParam("id") long id, HttpSession session, Model model) {
+        User user = (User) session.getAttribute("loggedInUser");
+        model.addAttribute("nickname", user.getNickname());
+        Diary diary = diaryService.getDiaryById(id);
+        model.addAttribute("diary", diary);
+        return "diary/diary-editTemporary";
+    }
+
     @PostMapping("diary/delete")
-    public String deleteDiary(DiaryDto diaryDto){
+    public String deleteDiary(DiaryDto diaryDto) {
         diaryService.deleteDiary(diaryDto);
         return "redirect:/";
     }
-
-
-
 }
+
+

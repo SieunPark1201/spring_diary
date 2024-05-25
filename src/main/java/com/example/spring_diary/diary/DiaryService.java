@@ -99,4 +99,7 @@ public class DiaryService {
 
     }
 
+    public Diary getDiaryById(long id) {
+        return diaryRepository.getById(id);
+    }
 }

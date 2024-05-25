@@ -1,13 +1,53 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <title>Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - 세줄요약좀</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css">
+    <style>
+        .fc-event, .fc-event:hover {
+            background-color: #007bff;
+            border: none;
+        }
+        .calendar-button {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+        }
+    </style>
 </head>
 <body>
-<h1>Welcome to the Home Page!</h1>
-<div th:if="${greeting}">
-    <h2 th:text="${greeting}"></h2>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand mx-auto" href="#">세줄요약좀</a>
+    <div class="navbar-nav ml-auto">
+        <span class="navbar-text mr-3" th:text="${nickname} + '님 환영합니다!'"></span>
+        <a class="btn btn-outline-secondary" href="/user/update">회원 정보 수정하기</a>
+    </div>
+</nav>
+<div class="container mt-5">
+    <div class="text-center mb-3">
+        <button class="btn btn-info" onclick="window.location.href='/diary/read/un-uploaded'">임시저장된 다이어리 보기</button>
+    </div>
+    <div id="calendar"></div>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
+<script>
+        $(document).ready(function() {
+            $('#calendar').fullCalendar({
+                events: '/diary/events',
+                dayClick: function(date, jsEvent, view) {
+                    window.location.href = '/diary/new?date=' + date.format();
+                },
+                eventRender: function(event, element) {
+                    element.find('.fc-title').append('<button class="btn btn-sm btn-primary calendar-button">+</button>');
+                }
+            });
+        });
+    </script>
 </body>
 </html>

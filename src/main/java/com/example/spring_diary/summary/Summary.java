@@ -2,7 +2,7 @@ package com.example.spring_diary.summary;
 
 import com.example.spring_diary.diary.Diary;
 import com.example.spring_diary.diary.DiaryDto;
-import com.example.spring_diary.picture.Picture;
+//import com.example.spring_diary.picture.Picture;
 import com.example.spring_diary.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -29,11 +29,13 @@ public class Summary {
     @JoinColumn(nullable = false, name = "diary_diaryId")
     private Diary diary;
 
-    @OneToMany(mappedBy = "summary", fetch = FetchType.LAZY)
-    private List<Picture> pictureList;
+//    @OneToMany(mappedBy = "summary", fetch = FetchType.LAZY)
+//    private List<Picture> pictureList;
+//    picture 테이블 삭제
 
-    public Summary(String content){
+    public Summary(String content, Diary diary){
         this.content = content;
+        this.diary = diary;
     }
 
 
