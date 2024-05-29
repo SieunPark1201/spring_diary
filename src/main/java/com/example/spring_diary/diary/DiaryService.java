@@ -73,14 +73,15 @@ public class DiaryService {
     // 글 조회-날짜별 && uploaded == true
     public List<Diary> readAllUploaded(){
         User user = getCurrentUser();
-        List<Diary> AllUploadedDiary = (diaryRepository.findAllByUser(user)).findAllByUploaded(true);
+        List<Diary> AllUploadedDiary = diaryRepository.findAllByUserAndUploaded(user, true);
+
         return AllUploadedDiary;
     }
 
     // 글 조회-uploaded == false
     public List<Diary> readAllUnUploaded(){
         User user = getCurrentUser();
-        List<Diary> AllUnUploadedDiary = (diaryRepository.findAllByUser(user)).findAllByUploaded(false);
+        List<Diary> AllUnUploadedDiary = diaryRepository.findAllByUserAndUploaded(user, false);
         return AllUnUploadedDiary;
     }
 

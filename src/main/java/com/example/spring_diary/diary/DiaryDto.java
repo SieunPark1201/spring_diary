@@ -17,4 +17,13 @@ public class DiaryDto {
     private LocalDate date;
 
     private boolean uploaded;
+
+    public static DiaryDto fromEntity(Diary diary) {
+        DiaryDto dto = new DiaryDto();
+        dto.setDiaryId(diary.getDiaryId());
+        dto.setContent(diary.getContent());
+        dto.setDate(diary.getDate());
+        dto.setUploaded(diary.isUploaded());
+        return dto;
+    }
 }

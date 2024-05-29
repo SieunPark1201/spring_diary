@@ -1,9 +1,11 @@
 package com.example.spring_diary;
 
+import com.example.spring_diary.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
@@ -33,9 +35,14 @@ public class SecurityConfig {
     private LoginSuccessHandler loginSuccessHandler;
 
 
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
+    private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    public SecurityConfig(UserService userService,
+                          PasswordEncoder passwordEncoder) {
+        this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
     }
 
 
@@ -66,6 +73,13 @@ public class SecurityConfig {
                 .csrf(CsrfConfigurer::disable); // CSRF 보호 비활성화;
 
         return httpSecurity.build();
+    }
+
+
+
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth, UserService userService) throws Exception {
+        auth.userDetailsService(userService).passwordEncoder(passwordEncoder);
     }
 
 

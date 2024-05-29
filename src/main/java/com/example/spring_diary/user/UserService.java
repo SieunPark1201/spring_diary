@@ -14,18 +14,22 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Service
 public class UserService implements UserDetailsService {
 
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-
+    @Autowired
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
     //회원가입
     public void createUser(UserDto userDto){
+        Role role = userDto.getRole() != null ? userDto.getRole() : Role.ROLE_USER;
+
         User user1 = new User(userDto.getNickname(),
                 userDto.getEmail(),
                 passwordEncoder.encode(userDto.getPassword()),
-                userDto.getBirthday());
+                userDto.getBirthday(), role);
         userRepository.save(user1);
     }
 
@@ -68,7 +72,10 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
          User user = userRepository.findByEmail(email);
-        return toUserDetail(user);
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found");
+        }
+        return new UserPrincipal(user);
     }
 
 

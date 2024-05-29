@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -36,16 +36,29 @@
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
-<script>
+<script th:inline="javascript">
         $(document).ready(function() {
             $('#calendar').fullCalendar({
-                events: '/diary/events',
-                dayClick: function(date, jsEvent, view) {
-                    window.location.href = '/diary/new?date=' + date.format();
-                },
-                eventRender: function(event, element) {
-                    element.find('.fc-title').append('<button class="btn btn-sm btn-primary calendar-button">+</button>');
-                }
+                events: [
+                    /* Fetch events from the model attribute 'uploadedDiaries' */
+                    /* Example:
+                    {
+                        title: 'Event Title',
+                        start: '2021-09-01'
+                    }
+                    */
+                    /* Iterate over 'uploadedDiaries' and create events */
+                    /* Thymeleaf inline JavaScript processing */
+                    /*[[${uploadedDiaries}]].map(function(diary) {
+                        return {
+                            title: diary.content.substring(0, 10), // Display first 10 characters
+                            start: diary.date,
+                            url: '/diary/edit-saved/' + diary.diaryId // Link to edit page
+                        };
+                    })*/
+                    /* This section will be processed by Thymeleaf and rendered as valid JavaScript array */
+                    [[${uploadedDiaries}]]
+                ]
             });
         });
     </script>

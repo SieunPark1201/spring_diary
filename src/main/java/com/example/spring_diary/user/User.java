@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Entity
+@Table(name="users")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -32,15 +33,20 @@ public class User {
     @Column
     private LocalDate birthday;
 
+    @Enumerated(EnumType.STRING)
+    @Column(length=20)
+    private Role role;
+
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Diary> diaryList;
 
 
     @Builder
-    public User(String nickname, String email, String password, LocalDate birthday){
+    public User(String nickname, String email, String password, LocalDate birthday, Role role){
         this.nickname = nickname;
         this.email = email;
         this.password = password;
         this.birthday = birthday;
+        this.role= role;
     }
 }

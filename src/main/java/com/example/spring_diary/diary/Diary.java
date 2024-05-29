@@ -28,11 +28,10 @@ public class Diary {
     private LocalDate date;
 
     @Column
-    private boolean uploaded;    // enum으로 하는 게 코드 가독성이 더 좋으려나? -> 굳이...
-
+    private boolean uploaded;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false, name = "user_userId")
+    @JoinColumn(nullable = false, name = "user_id")
     private User user;
 
     @OneToMany(mappedBy = "diary", fetch = FetchType.LAZY)

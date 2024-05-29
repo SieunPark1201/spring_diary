@@ -12,5 +12,6 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
 
     List<Diary> findAllByUploaded(boolean Uploaded);
 
-    DiaryRepository findAllByUser(User user);
+    List<Diary> findAllByUserAndUploaded(User user, boolean uploaded);
+
 }

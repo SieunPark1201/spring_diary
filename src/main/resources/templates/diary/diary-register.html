@@ -22,21 +22,21 @@
                     <h3>새로운 다이어리 작성</h3>
                 </div>
                 <div class="card-body">
-                    <form action="/diary/new" method="post">
+                    <form th:action="@{/diary/new}" method="post">
                         <div class="form-group">
                             <label for="content">Content</label>
-                            <textarea class="form-control" id="content" name="content" rows="10" required></textarea>
+                            <textarea class="form-control" id="content" name="content" rows="10" th:text="${diaryDto.content}" required></textarea>
                         </div>
                         <div class="form-group">
                             <label for="date">Date</label>
-                            <input type="date" class="form-control" id="date" name="date" required>
+                            <input type="date" class="form-control" id="date" name="date" th:value="${diaryDto.date}" required>
                         </div>
                         <div class="form-group form-check">
-                            <input type="checkbox" class="form-check-input" id="uploaded" name="uploaded">
+                            <input type="checkbox" class="form-check-input" id="uploaded" name="uploaded" th:checked="${diaryDto.uploaded}">
                             <label class="form-check-label" for="uploaded">Upload</label>
                         </div>
                         <button type="submit" class="btn btn-primary btn-block">저장</button>
-                        <button type="submit" class="btn btn-secondary btn-block" formaction="/diary/save-temporary">임시저장</button>
+                        <button type="submit" class="btn btn-secondary btn-block" th:formaction="@{/diary/save-temporary}">임시저장</button>
                     </form>
                 </div>
             </div>
