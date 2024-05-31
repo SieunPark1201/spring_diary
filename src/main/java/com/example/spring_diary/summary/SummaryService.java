@@ -4,6 +4,7 @@ import com.example.spring_diary.diary.Diary;
 import com.example.spring_diary.diary.DiaryDto;
 import com.example.spring_diary.diary.DiaryRepository;
 import com.example.spring_diary.openaiApi.*;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -63,4 +65,28 @@ public class SummaryService {
                 .getMessage()
                 .getContent();
     }
+
+    //특정 다이어리의 summary 조회
+    public List<Summary> getSummariesByDiaryId(DiaryDto diaryDto) {
+        return summaryRepository.findAllByDiaryDiaryId(diaryDto.getDiaryId());
+    }
+
+
+
+    // summary 삭제
+    public void deleteSummary(SummaryDto summaryDto) throws EntityNotFoundException {
+        Summary summary = summaryRepository.findBySummaryId(summaryDto.getSummaryId());
+
+        if (!summaryRepository.existsById(summaryDto.getSummaryId())) {
+            throw new EntityNotFoundException();
+        } else {
+            Summary deletingSummary = summaryRepository.findBySummaryId(summaryDto.getSummaryId());
+            summaryRepository.delete(deletingSummary);
+        }
+
+    }
+
+
+
+
 }
