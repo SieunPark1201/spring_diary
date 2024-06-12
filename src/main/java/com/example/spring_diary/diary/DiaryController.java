@@ -1,5 +1,6 @@
 package com.example.spring_diary.diary;
 
+import com.example.spring_diary.summary.SummaryService;
 import com.example.spring_diary.user.User;
 import com.example.spring_diary.user.UserPrincipal;
 import jakarta.servlet.http.HttpSession;
@@ -8,6 +9,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -21,16 +23,21 @@ public class DiaryController {
     @Autowired
     private DiaryService diaryService;
 
+    @Autowired
+    private SummaryService summaryService;
+
+
     @GetMapping("/home")
     public String home(@AuthenticationPrincipal UserPrincipal userPrincipal, Model model) {
+        if (userPrincipal == null || userPrincipal.getUser() == null) {
+            return "redirect:/user/login";
+        }
+
         User user = userPrincipal.getUser();
         model.addAttribute("nickname", user.getNickname());
 
         List<Diary> uploadedDiaries = diaryService.readAllUploaded();
-        List<DiaryDto> uploadedDiaryDtos = uploadedDiaries.stream()
-                .map(DiaryDto::fromEntity)
-                .collect(Collectors.toList());
-        model.addAttribute("uploadedDiaries", uploadedDiaryDtos);
+        model.addAttribute("uploadedDiaries", uploadedDiaries);
 
         return "home";
     }
@@ -51,14 +58,6 @@ public String newDiary(@AuthenticationPrincipal UserPrincipal userPrincipal, Mod
         diaryService.createDiary(diaryDto);
         return "redirect:/home";
     }
-
-
-////    글 수정 화면
-//    @PostMapping("diary/update")
-//    public String updateDiary(DiaryDto diaryDto){
-//        diaryService.updateDiary(diaryDto);
-//        return "redirect:/";
-//    }
 
     @GetMapping("diary/read/un-uploaded")
     public String readUnUploadedDiary(@AuthenticationPrincipal UserPrincipal userPrincipal, Model model) {
@@ -95,6 +94,20 @@ public String newDiary(@AuthenticationPrincipal UserPrincipal userPrincipal, Mod
         diaryService.deleteDiary(diaryDto);
         return "redirect:/home";
     }
+
+
+    @GetMapping("/diary/view/{id}")
+    public String viewDiary(@PathVariable("id") Long id, @AuthenticationPrincipal UserPrincipal userPrincipal, Model model) {
+        Diary diary = diaryService.getDiaryById(id);
+        model.addAttribute("diary", diary);
+
+        DiaryDto diaryDto = new DiaryDto();
+        diaryDto.setDiaryId(diary.getDiaryId());
+        model.addAttribute("summaries", summaryService.getSummariesByDiaryId(diaryDto));
+
+        return "diary/diary-read";
+    }
+
 }
 
 

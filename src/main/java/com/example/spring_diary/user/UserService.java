@@ -2,6 +2,7 @@ package com.example.spring_diary.user;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,6 +23,8 @@ public class UserService implements UserDetailsService {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
+
+
     //회원가입
     public void createUser(UserDto userDto){
         Role role = userDto.getRole() != null ? userDto.getRole() : Role.ROLE_USER;
@@ -86,5 +89,13 @@ public class UserService implements UserDetailsService {
                 .build();
     }
 
+    // 현재 로그인된 사용자 반환
+    public User getCurrentUser() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof UserPrincipal) {
+            return ((UserPrincipal) principal).getUser();
+        }
+        return null;
+    }
 }
 

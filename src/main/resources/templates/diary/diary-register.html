@@ -31,11 +31,8 @@
                             <label for="date">Date</label>
                             <input type="date" class="form-control" id="date" name="date" th:value="${diaryDto.date}" required>
                         </div>
-                        <div class="form-group form-check">
-                            <input type="checkbox" class="form-check-input" id="uploaded" name="uploaded" th:checked="${diaryDto.uploaded}">
-                            <label class="form-check-label" for="uploaded">Upload</label>
-                        </div>
-                        <button type="submit" class="btn btn-primary btn-block">저장</button>
+                        <input type="hidden" id="uploaded" name="uploaded" value="false">
+                        <button type="submit" class="btn btn-primary btn-block" th:formaction="@{/diary/new}">저장</button>
                         <button type="submit" class="btn btn-secondary btn-block" th:formaction="@{/diary/save-temporary}">임시저장</button>
                     </form>
                 </div>

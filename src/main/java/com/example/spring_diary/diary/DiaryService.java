@@ -74,7 +74,6 @@ public class DiaryService {
     public List<Diary> readAllUploaded(){
         User user = getCurrentUser();
         List<Diary> AllUploadedDiary = diaryRepository.findAllByUserAndUploaded(user, true);
-
         return AllUploadedDiary;
     }
 
