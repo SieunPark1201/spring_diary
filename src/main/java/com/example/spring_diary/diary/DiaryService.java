@@ -1,5 +1,8 @@
 package com.example.spring_diary.diary;
 
+import com.example.spring_diary.summary.Summary;
+import com.example.spring_diary.summary.SummaryRepository;
+import com.example.spring_diary.summary.SummaryService;
 import com.example.spring_diary.user.User;
 import com.example.spring_diary.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -18,6 +21,9 @@ public class DiaryService {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    SummaryRepository summaryRepository;
 
     // 현재 로그인된 사용자 정보 가져오기
     private User getCurrentUser(){
@@ -94,6 +100,8 @@ public class DiaryService {
                 throw new EntityNotFoundException("권한이 없습니다.");
         } else {
             Diary deletingDiary = diaryRepository.findByDiaryId(diaryDto.getDiaryId());
+            List<Summary> summaries = summaryRepository.findAllByDiaryDiaryId(diaryDto.getDiaryId());
+            summaryRepository.deleteAll(summaries);
             diaryRepository.delete(deletingDiary);
         }
 

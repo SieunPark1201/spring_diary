@@ -5,35 +5,61 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Diary View - 세줄요약좀</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .btn-center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .btn-center button {
+            margin-left: 10px;
+        }
+        .card.mb-3 {
+            position: relative;
+        }
+        .card.mb-3 .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+    </style>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand mx-auto" href="/home">세줄요약좀</a>
     <div class="navbar-nav ml-auto">
-        <span class="navbar-text mr-3" th:text="${diary.user.nickname} + '님 환영합니다!'"></span>
+        <span class="navbar-text mr-3" th:text="${nickname} + '님 환영합니다!'"></span>
         <a class="btn btn-outline-secondary" href="/user/update">회원 정보 수정하기</a>
         <a class="btn btn-outline-danger" href="/doLogout">로그아웃</a>
-
     </div>
 </nav>
 <div class="container mt-5">
     <h2>다이어리 보기</h2>
     <div class="mb-4">
-        <h4 th:text="${diary.date}"></h4>
-        <p th:text="${diary.content}"></p>
+        <h4 th:text="${diaryDto.date}"></h4>
+        <p th:text="${diaryDto.content}"></p>
     </div>
     <!-- 글 수정하기 버튼 -->
-    <div class="text-center mb-3">
-        <a th:href="@{'/diary/edit/' + ${diary.diaryId}}" class="btn btn-warning">글 수정하기</a>
+    <div class="btn-center">
+        <a th:href="@{'/diary/edit/' + ${diaryDto.diaryId}}" class="btn btn-warning">글 수정하기</a>
     </div>
     <!-- 다이어리 삭제하기 버튼 -->
-    <div class="text-center mb-3">
-        <button class="btn btn-danger" onclick="confirmDeleteDiary([[${diary.diaryId}]])">글 삭제하기</button>
+    <div class="btn-center">
+        <form th:action="@{/diary/delete}" method="post" th:object="${diaryDto}" style="display:inline;">
+            <!-- 다이어리 ID를 히든 필드로 전달 -->
+            <input type="hidden" name="diaryId" th:value="*{diaryId}">
+            <!-- CSRF 토큰 필드 -->
+            <button type="submit" class="btn btn-danger">글 삭제하기</button>
+        </form>
     </div>
-    <button class="btn btn-primary mb-4" id="createSummaryBtn">요약/분석 생성하기</button>
+    <div class="btn-center">
+        <button class="btn btn-primary mb-4" id="createSummaryBtn">요약/분석 생성하기</button>
+    </div>
+
     <div id="summaries">
         <h3>생성된 요약/분석</h3>
-        <div th:each="summary : ${summaries}" class="card mb-3">
+        <div th:each="summary : ${summaries}" class="card mb-3" th:id="'summary-' + ${summary.summaryId}">
             <div class="card-body">
                 <button type="button" class="close" aria-label="Close" th:onclick="'deleteSummary(' + ${summary.summaryId} + ');'">
                     <span aria-hidden="true">&times;</span>
@@ -69,7 +95,7 @@
 <script th:inline="javascript">
     $(document).ready(function() {
         $('#createSummaryBtn').on('click', function() {
-            $.post("/summary/create", { diaryId: [[${diary.diaryId}]] })
+            $.post("/summary/create", { diaryId: [[${diaryDto.diaryId}]] })
                 .done(function(data) {
                     $('#summaryContent').text(data);
                     $('#summaryModal').modal('show');

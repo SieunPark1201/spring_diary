@@ -24,13 +24,18 @@
                     <h3>새로운 다이어리 작성</h3>
                 </div>
                 <div class="card-body">
-                    <form th:action="@{/diary/save}" method="post" th:object="${diaryDto}">
+                    <form th:action="@{/diary/edit}" method="post" th:object="${diaryDto}">
                         <div class="form-group">
                             <label for="content">내용</label>
                             <textarea class="form-control" id="content" th:field="*{content}" rows="10" required></textarea>
                         </div>
                         <div class="form-group">
-                            <label for="date">날짜</label>
+                            <label for="date">기존에 저장되어 있던 날짜</label>
+                            <!-- 기존 날짜를 년/월/일 형태로 표시 -->
+                            <div class="form-control-plaintext" th:text="${formattedDate}"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="date">저장할 날짜</label>
                             <input type="date" class="form-control" id="date" th:field="*{date}" required>
                         </div>
                         <!-- hidden 필드를 사용하여 uploaded 값을 전송 -->

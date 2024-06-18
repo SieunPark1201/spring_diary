@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -66,7 +67,6 @@ public class DiaryController {
         return "diary/diary-readTemporary";
     }
 
-    // 다이어리 수정 페이지로 이동
     @GetMapping("/diary/edit/{id}")
     public String editDiary(@PathVariable("id") long id, @AuthenticationPrincipal UserPrincipal userPrincipal, Model model) {
         User user = userPrincipal.getUser();
@@ -75,20 +75,33 @@ public class DiaryController {
         // 다이어리 ID로 다이어리 엔티티를 찾음
         Diary diary = diaryService.getDiaryById(id);
         DiaryDto diaryDto = DiaryDto.fromEntity(diary);
+
+        // 날짜 포맷 설정
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String formattedDate = diaryDto.getDate() != null ? diaryDto.getDate().format(formatter) : "";
+
         model.addAttribute("diaryDto", diaryDto);
+        model.addAttribute("formattedDate", formattedDate);
 
         return "diary/diary-edit";
     }
 
-    @GetMapping("diary/edit-saved")
-    public String editSavedDiary(@RequestParam("id") long id, @AuthenticationPrincipal UserPrincipal userPrincipal, Model model) {
-        User user = userPrincipal.getUser();
-        model.addAttribute("nickname", user.getNickname());
-        Diary diary = diaryService.getDiaryById(id);
-        DiaryDto diaryDto = DiaryDto.fromEntity(diary);
-        model.addAttribute("diaryDto", diaryDto);
-        return "diary/diary-edit-saved";
+    // 다이어리 업데이트 처리
+    @PostMapping("/diary/edit")
+    public String updateDiary(DiaryDto diaryDto, @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        diaryService.updateDiary(diaryDto);
+        return "redirect:/home";
     }
+
+//    @GetMapping("diary/edit-saved")
+//    public String editSavedDiary(@RequestParam("id") long id, @AuthenticationPrincipal UserPrincipal userPrincipal, Model model) {
+//        User user = userPrincipal.getUser();
+//        model.addAttribute("nickname", user.getNickname());
+//        Diary diary = diaryService.getDiaryById(id);
+//        DiaryDto diaryDto = DiaryDto.fromEntity(diary);
+//        model.addAttribute("diaryDto", diaryDto);
+//        return "diary/diary-edit-saved";
+//    }
 
     @PostMapping("diary/delete")
     public String deleteDiary(DiaryDto diaryDto) {
@@ -100,10 +113,12 @@ public class DiaryController {
     @GetMapping("/diary/view/{id}")
     public String viewDiary(@PathVariable("id") Long id, @AuthenticationPrincipal UserPrincipal userPrincipal, Model model) {
         Diary diary = diaryService.getDiaryById(id);
-        model.addAttribute("diary", diary);
+        DiaryDto diaryDto = DiaryDto.fromEntity(diary);
+        User user = userPrincipal.getUser();
 
-        DiaryDto diaryDto = new DiaryDto();
-        diaryDto.setDiaryId(diary.getDiaryId());
+
+        model.addAttribute("nickname", user.getNickname());
+        model.addAttribute("diaryDto", diaryDto);
         model.addAttribute("summaries", summaryService.getSummariesByDiaryId(diaryDto));
 
         return "diary/diary-read";
