@@ -88,8 +88,10 @@ public class DiaryController {
 
     // 다이어리 업데이트 처리
     @PostMapping("/diary/edit")
-    public String updateDiary(DiaryDto diaryDto, @AuthenticationPrincipal UserPrincipal userPrincipal) {
+    public String updateDiary(@ModelAttribute DiaryDto diaryDto, @AuthenticationPrincipal UserPrincipal userPrincipal) {
+
         diaryService.updateDiary(diaryDto);
+
         return "redirect:/home";
     }
 

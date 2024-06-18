@@ -49,32 +49,20 @@ public class DiaryService {
 
     // 글 내용 수정
     public void updateDiary(DiaryDto diaryDto) throws EntityNotFoundException{
-//        기존 DB에 저장되어 있는 글인지 조회 후 데려오기
-        if (!diaryRepository.existsById(diaryDto.getDiaryId())){
-            throw new EntityNotFoundException();
-        } else {
-            Diary beforeUpdateDiary = diaryRepository.findByDiaryId(diaryDto.getDiaryId());
-            beforeUpdateDiary.setContent(diaryDto.getContent());
-            diaryRepository.save(beforeUpdateDiary);
-        }
+        // 다이어리 ID로 기존 다이어리 찾기
+        Diary existingDiary = diaryRepository.findById(diaryDto.getDiaryId())
+                .orElseThrow(() -> new EntityNotFoundException("Diary not found"));
 
+        // 기존 다이어리 정보 업데이트
+        existingDiary.setContent(diaryDto.getContent());
+        existingDiary.setDate(diaryDto.getDate());
+        existingDiary.setUploaded(diaryDto.isUploaded());
+
+        // 다이어리 저장
+        diaryRepository.save(existingDiary);
     }
 
 
-    //글 임시저장->저장 수정
-    public void uploadDiary(DiaryDto diaryDto) throws Exception {
-        Diary unuploadedDiary = diaryRepository.findByDiaryId(diaryDto.getDiaryId());
-        if (unuploadedDiary == null || !unuploadedDiary.getUser().equals(getCurrentUser())) {
-            throw new Exception("권한이 없습니다.");
-        }
-
-        if (unuploadedDiary.isUploaded()){
-            throw new Exception();   // 좀 더 구체적인 Exception으로 나중에 수정하기
-        } else {
-            unuploadedDiary.setUploaded(true);
-            diaryRepository.save(unuploadedDiary);
-        }
-    }
 
     // 글 조회-날짜별 && uploaded == true
     public List<Diary> readAllUploaded(){

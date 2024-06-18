@@ -25,6 +25,8 @@
                 </div>
                 <div class="card-body">
                     <form th:action="@{/diary/edit}" method="post" th:object="${diaryDto}">
+                        <!-- 다이어리 ID를 히든 필드로 추가 -->
+                        <input type="hidden" th:field="*{diaryId}">
                         <div class="form-group">
                             <label for="content">내용</label>
                             <textarea class="form-control" id="content" th:field="*{content}" rows="10" required></textarea>
