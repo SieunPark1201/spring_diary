@@ -8,10 +8,12 @@
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand mx-auto" href="#">세줄요약좀</a>
+    <a class="navbar-brand mx-auto" href="/home">세줄요약좀</a>
     <div class="navbar-nav ml-auto">
         <span class="navbar-text mr-3" th:text="${nickname} + '님 환영합니다!'"></span>
         <a class="btn btn-outline-secondary" href="/user/update">회원 정보 수정하기</a>
+        <a class="btn btn-outline-danger" href="/doLogout">로그아웃</a>
+
     </div>
 </nav>
 <div class="container mt-5">
@@ -22,18 +24,19 @@
                     <h3>새로운 다이어리 작성</h3>
                 </div>
                 <div class="card-body">
-                    <form th:action="@{/diary/new}" method="post">
+                    <form th:action="@{/diary/save}" method="post" th:object="${diaryDto}">
                         <div class="form-group">
-                            <label for="content">Content</label>
-                            <textarea class="form-control" id="content" name="content" rows="10" th:text="${diaryDto.content}" required></textarea>
+                            <label for="content">내용</label>
+                            <textarea class="form-control" id="content" th:field="*{content}" rows="10" required></textarea>
                         </div>
                         <div class="form-group">
-                            <label for="date">Date</label>
-                            <input type="date" class="form-control" id="date" name="date" th:value="${diaryDto.date}" required>
+                            <label for="date">날짜</label>
+                            <input type="date" class="form-control" id="date" th:field="*{date}" required>
                         </div>
-                        <input type="hidden" id="uploaded" name="uploaded" value="false">
-                        <button type="submit" class="btn btn-primary btn-block" th:formaction="@{/diary/new}">저장</button>
-                        <button type="submit" class="btn btn-secondary btn-block" th:formaction="@{/diary/save-temporary}">임시저장</button>
+                        <!-- hidden 필드를 사용하여 uploaded 값을 전송 -->
+                        <input type="hidden" id="uploaded" th:field="*{uploaded}" value="false">
+                        <button type="submit" class="btn btn-primary btn-block" onclick="setUploadedTrue()">저장</button>
+                        <button type="submit" class="btn btn-secondary btn-block" onclick="setUploadedFalse()">임시저장</button>
                     </form>
                 </div>
             </div>
@@ -44,5 +47,13 @@
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    function setUploadedTrue() {
+        document.getElementById('uploaded').value = 'true';
+    }
+    function setUploadedFalse() {
+        document.getElementById('uploaded').value = 'false';
+    }
+</script>
 </body>
 </html>

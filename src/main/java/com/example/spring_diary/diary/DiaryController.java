@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -43,20 +40,20 @@ public class DiaryController {
     }
 
 //    글 생성 화면
-@GetMapping("diary/new")
-public String newDiary(@AuthenticationPrincipal UserPrincipal userPrincipal, Model model, @RequestParam(name = "date", required = false) String date) {
-    User user = userPrincipal.getUser();
-    DiaryDto diaryDto = new DiaryDto();
-    diaryDto.setDate(date != null ? LocalDate.parse(date) : LocalDate.now());
-    model.addAttribute("nickname", user.getNickname());
-    model.addAttribute("diaryDto", diaryDto);
-    return "diary/diary-register";
-}
+    @GetMapping("/diary/new")
+    public String newDiaryForm(@AuthenticationPrincipal UserPrincipal userPrincipal, Model model) {
+        User user = userPrincipal.getUser();
+        model.addAttribute("nickname", user.getNickname());
+        model.addAttribute("diaryDto", new DiaryDto()); // 빈 DiaryDto 객체 추가
+        return "diary/diary-register"; // 다이어리 작성 폼으로 이동
+    }
 
-    @PostMapping("diary/new")
-    public String newDiary(DiaryDto diaryDto) {
+    @PostMapping("/diary/save")
+    public String saveDiary(@ModelAttribute DiaryDto diaryDto, @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        // 다이어리 저장
         diaryService.createDiary(diaryDto);
-        return "redirect:/home";
+
+        return "redirect:/home"; // 저장 후 홈 화면으로 리디렉션
     }
 
     @GetMapping("diary/read/un-uploaded")
@@ -69,13 +66,17 @@ public String newDiary(@AuthenticationPrincipal UserPrincipal userPrincipal, Mod
         return "diary/diary-readTemporary";
     }
 
-    @GetMapping("diary/edit")
-    public String editDiary(@RequestParam("id") long id, @AuthenticationPrincipal UserPrincipal userPrincipal, Model model) {
+    // 다이어리 수정 페이지로 이동
+    @GetMapping("/diary/edit/{id}")
+    public String editDiary(@PathVariable("id") long id, @AuthenticationPrincipal UserPrincipal userPrincipal, Model model) {
         User user = userPrincipal.getUser();
         model.addAttribute("nickname", user.getNickname());
+
+        // 다이어리 ID로 다이어리 엔티티를 찾음
         Diary diary = diaryService.getDiaryById(id);
         DiaryDto diaryDto = DiaryDto.fromEntity(diary);
         model.addAttribute("diaryDto", diaryDto);
+
         return "diary/diary-edit";
     }
 

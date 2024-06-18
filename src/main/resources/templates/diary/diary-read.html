@@ -8,10 +8,12 @@
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand mx-auto" href="#">세줄요약좀</a>
+    <a class="navbar-brand mx-auto" href="/home">세줄요약좀</a>
     <div class="navbar-nav ml-auto">
         <span class="navbar-text mr-3" th:text="${diary.user.nickname} + '님 환영합니다!'"></span>
         <a class="btn btn-outline-secondary" href="/user/update">회원 정보 수정하기</a>
+        <a class="btn btn-outline-danger" href="/doLogout">로그아웃</a>
+
     </div>
 </nav>
 <div class="container mt-5">
@@ -19,6 +21,14 @@
     <div class="mb-4">
         <h4 th:text="${diary.date}"></h4>
         <p th:text="${diary.content}"></p>
+    </div>
+    <!-- 글 수정하기 버튼 -->
+    <div class="text-center mb-3">
+        <a th:href="@{'/diary/edit/' + ${diary.diaryId}}" class="btn btn-warning">글 수정하기</a>
+    </div>
+    <!-- 다이어리 삭제하기 버튼 -->
+    <div class="text-center mb-3">
+        <button class="btn btn-danger" onclick="confirmDeleteDiary([[${diary.diaryId}]])">글 삭제하기</button>
     </div>
     <button class="btn btn-primary mb-4" id="createSummaryBtn">요약/분석 생성하기</button>
     <div id="summaries">
@@ -59,16 +69,29 @@
 <script th:inline="javascript">
     $(document).ready(function() {
         $('#createSummaryBtn').on('click', function() {
-            $.post("/summary/create", { diaryId: [[${diary.diaryId}]] }, function(data) {
-                $('#summaryContent').text(data);
-                $('#summaryModal').modal('show');
-            });
+            $.post("/summary/create", { diaryId: [[${diary.diaryId}]] })
+                .done(function(data) {
+                    $('#summaryContent').text(data);
+                    $('#summaryModal').modal('show');
+                })
+                .fail(function(jqXHR, textStatus, errorThrown) {
+                    alert("요약 생성 중 오류가 발생했습니다. 다시 시도해 주세요.");
+                    console.error("Error: " + textStatus + " - " + errorThrown);
+                });
         });
     });
 
     function deleteSummary(summaryId) {
         if (confirm('정말로 이 요약/분석을 삭제하시겠습니까?')) {
-            window.location.href = '/summary/delete/' + summaryId;
+            $.post("/summary/delete", { summaryId: summaryId })
+                .done(function() {
+                    // 삭제가 성공하면 해당 요약 요소를 화면에서 제거
+                    $('#summary-' + summaryId).remove();
+                })
+                .fail(function(jqXHR, textStatus, errorThrown) {
+                    alert("요약 삭제 중 오류가 발생했습니다. 다시 시도해 주세요.");
+                    console.error("Error: " + textStatus + " - " + errorThrown);
+                });
         }
     }
 </script>

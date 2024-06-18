@@ -3,8 +3,11 @@ package com.example.spring_diary.summary;
 import com.example.spring_diary.diary.Diary;
 import com.example.spring_diary.diary.DiaryDto;
 import com.example.spring_diary.diary.DiaryService;
+import com.example.spring_diary.user.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -31,6 +34,17 @@ public class SummaryController {
 
             return summaryService.summarize(diaryDto);
         }
+
+    @PostMapping("/summary/delete")
+    public String summaryDelete(@RequestParam("summaryId") long summaryId) throws Exception {
+        SummaryDto summaryDto = new SummaryDto();
+        summaryDto.setSummaryId(summaryId);
+
+        // Summary 삭제 서비스 호출
+        summaryService.deleteSummary(summaryDto);
+
+        return "redirect:/"; // 삭제 후 리디렉션
+    }
 
 }
 

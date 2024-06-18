@@ -4,29 +4,60 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>임시저장된 다이어리 목록 - 세줄요약좀</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrap.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .list-group-item {
+            padding: 20px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        .list-group-item:hover {
+            background-color: #f8f9fa;
+        }
+        .list-group-item h5 {
+            margin-bottom: 5px;
+        }
+        .card-header {
+            background-color: #f8f9fa;
+        }
+    </style>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand mx-auto" href="#">세줄요약좀</a>
+    <a class="navbar-brand mx-auto" href="/home">세줄요약좀</a>
     <div class="navbar-nav ml-auto">
         <span class="navbar-text mr-3" th:text="${nickname} + '님 환영합니다!'"></span>
         <a class="btn btn-outline-secondary" href="/user/update">회원 정보 수정하기</a>
+        <a class="btn btn-outline-danger" href="/doLogout">로그아웃</a>
+
     </div>
 </nav>
 <div class="container mt-5">
-    <h3 class="text-center">임시저장된 다이어리 목록</h3>
-    <div class="list-group mt-3">
-        <a th:each="diary : ${temporaryDiaries}"
-           th:href="@{/diary/edit/{id}(id=${diary.diaryId})}"
-           class="list-group-item list-group-item-action">
-            <h5 th:text="${diary.date} + ' - ' + ${diary.content.substring(0, 20)} + '...'"></h5>
-        </a>
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h3>임시저장된 다이어리 목록</h3>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        <!-- 다이어리 항목을 클릭하면 수정 페이지로 이동 -->
+                        <a th:each="diary : ${temporaryDiaries}"
+                           th:href="@{/diary/edit/{id}(id=${diary.diaryId})}"
+                           class="list-group-item list-group-item-action">
+                            <h5 th:text="${diary.date}"></h5>
+                            <p th:text="${diary.content}"></p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrap.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

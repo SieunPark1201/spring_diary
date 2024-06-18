@@ -32,10 +32,11 @@
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand mx-auto" href="#">세줄요약좀</a>
+    <a class="navbar-brand mx-auto" href="/home">세줄요약좀</a>
     <div class="navbar-nav ml-auto">
         <span class="navbar-text mr-3" th:text="${nickname} + '님 환영합니다!'"></span>
         <a class="btn btn-outline-secondary" href="/user/update">회원 정보 수정하기</a>
+        <a class="btn btn-outline-danger" href="/doLogout">로그아웃</a>
     </div>
 </nav>
 <div class="container mt-5">
@@ -57,14 +58,6 @@
                     <a th:href="@{'/diary/view/' + ${diary.diaryId}}" class="btn btn-sm btn-primary read-more-btn">더 보기</a>
                 </div>
             </div>
-        </div>
-    </div>
-    <!-- 데이터 디버깅 출력 -->
-    <div>
-        <h3>Debug Information</h3>
-        <p th:text="'Uploaded Diaries: ' + ${uploadedDiaries.size()}"></p>
-        <div th:each="diary : ${uploadedDiaries}">
-            <p th:text="${diary.date} + ' - ' + ${diary.content}"></p>
         </div>
     </div>
 </div>

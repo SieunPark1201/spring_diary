@@ -69,6 +69,11 @@ public class SecurityConfig {
                 )
                 .logout(logout -> logout
                         .logoutUrl("/doLogout")
+                        .logoutSuccessUrl("/user/login?logout") // 로그아웃 후 로그인 페이지로 리디렉션
+                        .invalidateHttpSession(true) // 세션 무효화
+                        .deleteCookies("JSESSIONID") // 쿠키 삭제
+                        .permitAll()
+
                 )
                 .csrf(CsrfConfigurer::disable); // CSRF 보호 비활성화;
 
