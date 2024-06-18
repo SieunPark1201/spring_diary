@@ -79,17 +79,17 @@ public class UserController {
     // 사용자 업데이트 요청 처리
     @PostMapping("/user/update")
     public String updateUser(UserDto userDto, Model model) throws Exception {
-//        try {
+        try {
             // 현재 사용자의 ID를 userDto에 설정하여 업데이트
             User currentUser = userService.getCurrentUser();
             userDto.setUserId(currentUser.getUserId());
 
             userService.updateUser(userDto);
             return "redirect:/home"; // 업데이트 후 홈 페이지로 리다이렉션
-//        } catch (Exception e) {
-//            model.addAttribute("errorMessage", "사용자 정보를 업데이트하는 중 오류가 발생했습니다.");
-//            return "user/user-update"; // 에러가 발생한 경우 다시 업데이트 페이지로
-//        }
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "사용자 정보를 업데이트하는 중 오류가 발생했습니다.");
+            return "user/user-update"; // 에러가 발생한 경우 다시 업데이트 페이지로
+        }
     }
 
     // 회원탈퇴 화면
