@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Update User - 세줄요약좀</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    .invalid-feedback {
+      display: none;
+    }
+  </style>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -26,6 +31,7 @@
     <div class="form-group">
       <label for="email">이메일</label>
       <input type="email" class="form-control" id="email" th:field="*{email}" name="email" required>
+      <div class="invalid-feedback" id="emailError">이 이메일은 이미 사용 중입니다.</div>
     </div>
     <div class="form-group">
       <label for="birthday">생일</label>
@@ -38,5 +44,36 @@
   </div>
   <div th:if="${errorMessage}" class="alert alert-danger mt-3" th:text="${errorMessage}"></div>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $('#email').on('blur', function() {
+      var email = $(this).val();
+      var userId = $('input[name="userId"]').val(); // 현재 사용자의 ID
+
+      if (email) {
+        $.ajax({
+          url: '/user/check-email', // 이메일 중복 검사 API 호출
+          type: 'GET',
+          data: {
+            email: email,
+            userId: userId // 현재 사용자 ID를 포함하여 본인 제외
+          },
+          success: function(response) {
+            if (response.exists) {
+              $('#emailError').show();
+            } else {
+              $('#emailError').hide();
+            }
+          },
+          error: function() {
+            $('#emailError').text('이메일 중복 체크 중 오류가 발생했습니다.').show();
+          }
+        });
+      }
+    });
+  });
+</script>
 </body>
 </html>

@@ -1,5 +1,9 @@
 package com.example.spring_diary.user;
 
+import com.example.spring_diary.diary.Diary;
+import com.example.spring_diary.diary.DiaryRepository;
+import com.example.spring_diary.summary.Summary;
+import com.example.spring_diary.summary.SummaryRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -9,6 +13,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.List;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 
@@ -18,16 +24,26 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    private final SummaryRepository summaryRepository;
+    private final DiaryRepository diaryRepository;
+
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, SummaryRepository summaryRepository, DiaryRepository diaryRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.summaryRepository = summaryRepository;
+        this.diaryRepository = diaryRepository;
     }
 
 
     //회원가입
     public void createUser(UserDto userDto){
         Role role = userDto.getRole() != null ? userDto.getRole() : Role.ROLE_USER;
+
+        // 이메일 중복 검사
+        if (userRepository.existsByEmail(userDto.getEmail())) {
+            throw new IllegalArgumentException("이메일이 이미 사용 중입니다.");
+        }
 
         User user1 = new User(userDto.getNickname(),
                 userDto.getEmail(),
@@ -46,6 +62,11 @@ public class UserService implements UserDetailsService {
             System.out.println("해당 사용자를 찾을 수 없습니다.");
             throw new EntityNotFoundException();
         } else {
+            // 이메일 중복 검사
+            if (!user1.getEmail().equals(userDto.getEmail()) && userRepository.existsByEmail(userDto.getEmail())) {
+                throw new IllegalArgumentException("이메일이 이미 사용 중입니다.");
+            }
+
             user1.setNickname(userDto.getNickname());
             user1.setEmail(userDto.getEmail());
 //            user1.setPassword(passwordEncoder.encode(userDto.getPassword()));
@@ -67,6 +88,17 @@ public class UserService implements UserDetailsService {
             System.out.println("해당 사용자를 찾을 수 없습니다.");
             throw new EntityNotFoundException();
         } else {
+            // 사용자의 모든 다이어리를 조회
+            List<Diary> diaries = diaryRepository.findAllById(Collections.singleton(userDto.getUserId()));
+
+            for (Diary diary : diaries) {
+                // 각 다이어리에 연결된 모든 요약 삭제
+                List<Summary> summaries = summaryRepository.findAllByDiaryDiaryId(diary.getDiaryId());
+                summaryRepository.deleteAll(summaries);
+
+                // 다이어리 삭제
+                diaryRepository.delete(diary);
+            }
             userRepository.delete(user1);
         }
     }
@@ -82,13 +114,6 @@ public class UserService implements UserDetailsService {
     }
 
 
-    private UserDetails toUserDetail(User user) {
-        return org.springframework.security.core.userdetails.User.withUsername(user.getEmail())
-                .password(user.getPassword())
-                .authorities(Collections.emptyList()) // 권한이 없는 경우 빈 리스트를 제공
-                .build();
-    }
-
     // 현재 로그인된 사용자 반환
     public User getCurrentUser() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -97,5 +122,16 @@ public class UserService implements UserDetailsService {
         }
         return null;
     }
+
+    public User findUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+    }
+
+    public boolean isEmailTaken(String email, Long userId) {
+        User user = userRepository.findByEmail(email);
+        return user != null && (userId == null || !(user.equals(userRepository.findByUserId(userId))));
+    }
+
 }
 

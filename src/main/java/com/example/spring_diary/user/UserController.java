@@ -5,12 +5,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -47,14 +45,30 @@ public class UserController {
 
     //    회원가입 화면
     @GetMapping("user/new")
-    public String newUser(){
+    public String newUser(Model model){
+
+        model.addAttribute("userDto", new UserDto()); // 빈 UserDto 객체를 모델에 추가
+
+
         return "user/user-register";
     }
 
-    @PostMapping("user/new")
-    public String newUser(UserDto userDto){
-        userService.createUser(userDto);
-        return "redirect:/";
+    @PostMapping("/user/new")
+    public String createUser(@ModelAttribute UserDto userDto, Model model) {
+        try {
+            // 이메일 중복 체크
+            if (userService.isEmailTaken(userDto.getEmail(), null)) {
+                model.addAttribute("errorMessage", "이 이메일은 이미 사용 중입니다.");
+                return "user/user-register";
+            }
+
+            // 사용자 생성
+            userService.createUser(userDto);
+            return "redirect:/user/login";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "회원가입 중 오류가 발생했습니다: " + e.getMessage());
+            return "user/user-register";
+        }
     }
 
 
@@ -85,12 +99,43 @@ public class UserController {
             userDto.setUserId(currentUser.getUserId());
 
             userService.updateUser(userDto);
+            // 현재 사용자 정보 갱신
+            updateSessionUser(userDto);
+
             return "redirect:/home"; // 업데이트 후 홈 페이지로 리다이렉션
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            return "user/user-update";
         } catch (Exception e) {
             model.addAttribute("errorMessage", "사용자 정보를 업데이트하는 중 오류가 발생했습니다.");
             return "user/user-update"; // 에러가 발생한 경우 다시 업데이트 페이지로
         }
     }
+
+    private void updateSessionUser(UserDto userDto) {
+        // 현재 세션의 SecurityContext를 가져와서 사용자 정보를 갱신.
+        User user = userService.findUserById(userDto.getUserId());
+
+        // 새로운 UserPrincipal 생성
+        UserPrincipal updatedUserPrincipal = new UserPrincipal(user);
+
+        // SecurityContext의 Authentication 객체를 교체
+        SecurityContextHolder.getContext().setAuthentication(
+                new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
+                        updatedUserPrincipal,
+                        updatedUserPrincipal.getPassword(),
+                        updatedUserPrincipal.getAuthorities()
+                )
+        );
+    }
+
+
+    @GetMapping("/user/check-email")
+    public EmailCheckResponse checkEmail(@RequestParam String email, @RequestParam Long userId) {
+        boolean exists = userService.isEmailTaken(email, userId);
+        return new EmailCheckResponse(exists);
+    }
+
 
     // 회원탈퇴 화면
     @PostMapping("user/delete")
