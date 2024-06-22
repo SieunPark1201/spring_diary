@@ -136,14 +136,47 @@ public class UserController {
         return new EmailCheckResponse(exists);
     }
 
+    @GetMapping("/user/delete")
+    public String userDeleteConfirmation(Model model, @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        if (userPrincipal != null) {
+            // 현재 로그인된 사용자의 User 객체를 가져옵니다.
+            User user = userPrincipal.getUser();
 
-    // 회원탈퇴 화면
-    @PostMapping("user/delete")
-    public String userDelete(UserDto userDto) throws Exception{
-        userService.deleteUser(userDto);
-        return "redirect:/";
+            // User 객체를 UserDto로 변환합니다.
+            UserDto userDto = new UserDto();
+            userDto.setUserId(user.getUserId());
+            userDto.setNickname(user.getNickname());
+            userDto.setEmail(user.getEmail());
+            userDto.setBirthday(user.getBirthday());
+
+            // UserDto 객체를 모델에 추가합니다.
+            model.addAttribute("userDto", userDto);
+        } else {
+            // UserPrincipal이 null일 경우 처리
+            model.addAttribute("errorMessage", "로그인된 사용자 정보를 가져올 수 없습니다.");
+            return "error/500"; // 적절한 오류 페이지로 리디렉션
+        }
+
+        return "user/user-deleting";
     }
 
+    // 회원 탈퇴 처리
+    @PostMapping("/user/delete")
+    public String userDelete(@ModelAttribute UserDto userDto, Model model) {
+        try {
+            userService.deleteUser(userDto);
+            // 탈퇴 후 탈퇴 완료 화면으로 리디렉션
+            return "redirect:/user/deleted";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "회원 탈퇴 중 오류가 발생했습니다: " + e.getMessage());
+            return "user/user-deleting"; // 오류가 발생하면 동일한 화면을 다시 표시
+        }
+    }
 
+    // 회원 탈퇴 후 화면
+    @GetMapping("/user/deleted")
+    public String userDeleted() {
+        return "user/user-deleted"; // 탈퇴 완료 템플릿 반환
+    }
 
 }

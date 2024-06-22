@@ -79,27 +79,26 @@ public class UserService implements UserDetailsService {
     }
 
 
-    //회원삭제
-    public void deleteUser(UserDto userDto) throws Exception{
-        User user1 = userRepository.findByUserId(userDto.getUserId());
+    // 회원탈퇴
+    public void deleteUser(UserDto userDto) throws Exception {
+        User user = userRepository.findByUserId(userDto.getUserId());
 
-        if (user1 == null) {
-            // 해당 회원이 없으면 예외처리 발생
-            System.out.println("해당 사용자를 찾을 수 없습니다.");
-            throw new EntityNotFoundException();
+        if (user == null) {
+            throw new EntityNotFoundException("해당 사용자를 찾을 수 없습니다.");
         } else {
-            // 사용자의 모든 다이어리를 조회
-            List<Diary> diaries = diaryRepository.findAllById(Collections.singleton(userDto.getUserId()));
-
+            // 해당 사용자가 작성한 모든 다이어리와 요약을 먼저 삭제합니다.
+            List<Diary> diaries = diaryRepository.findAllByUser(user);
             for (Diary diary : diaries) {
-                // 각 다이어리에 연결된 모든 요약 삭제
-                List<Summary> summaries = summaryRepository.findAllByDiaryDiaryId(diary.getDiaryId());
+                // 각 다이어리에 연결된 요약 삭제
+                List<Summary> summaries = summaryRepository.findAllByDiary(diary);
                 summaryRepository.deleteAll(summaries);
 
                 // 다이어리 삭제
                 diaryRepository.delete(diary);
             }
-            userRepository.delete(user1);
+
+            // 최종적으로 사용자 삭제
+            userRepository.delete(user);
         }
     }
 
